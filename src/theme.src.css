@@ -1,0 +1,1110 @@
+/* ==========================================================================
+   FALLOUT — a phosphor-terminal theme for Obsidian
+   Unofficial and fan-made. Not affiliated with, endorsed by, or associated
+   with Bethesda Softworks, ZeniMax Media, or Microsoft. Fallout is a
+   trademark of Bethesda Softworks LLC.
+
+   Dark mode only (v1). One hue, many brightnesses.
+
+   Sections
+     0. Embedded fonts
+     1. Variables (palette ramp → Obsidian variables)
+     2. Typography
+     3. Layout (CRT scanlines)
+     4. Components
+     5. Plugins            (Phase 4)
+     6. Style Settings (palettes, effects, fonts)
+
+   Fonts (SIL Open Font License 1.1, embedded — no network requests):
+     Share Tech Mono — headings and interface
+     JetBrains Mono  — body text and code
+   Licences: fonts/ in the repository. Theme code: MIT, see LICENSE.
+   ========================================================================== */
+
+/* ---------- 0. Embedded fonts (SIL Open Font License 1.1) --------------- */
+/*@@FONTS@@*/
+
+/* ---------- 1. Variables ------------------------------------------------ */
+
+/* 1a. The ramp. Every colour in the theme comes from --fo-h / --fo-s, so a
+   palette only has to change the hue, saturation and the RGB triplets below
+   (Obsidian's callouts and graph need "r, g, b" values, which CSS can't
+   derive from hsl() variables). */
+body {
+  /* Palette inputs (Green). The palettes in section 6 override only these. */
+  --fo-h: 147;
+  --fo-s: 100%;
+  --fo-bg-s: 25%;                                        /* backgrounds: same hue, quieter */
+  --fo-line-s: 60%;
+  --fo-l1: 72%;
+  --fo-l2: 55%;
+  --fo-l3: 36%;
+  --fo-l4: 29%;   /* faint: ≥ 4.5:1 on every surface, it carries content (strikethrough, done tasks) */
+  --fo-l-bar-dim: 30%;
+  --fo-rgb-1: 112, 255, 176;
+  --fo-rgb-2: 26, 255, 129;
+  --fo-rgb-3: 0, 184, 83;
+  --fo-rgb-4: 0, 148, 67;
+
+  /* Text: brightest → faintest */
+  --fo-text-1: hsl(var(--fo-h) var(--fo-s) var(--fo-l1)); /* H1, bold, active */
+  --fo-text-2: hsl(var(--fo-h) var(--fo-s) var(--fo-l2)); /* body (#1aff81) */
+  --fo-text-3: hsl(var(--fo-h) var(--fo-s) var(--fo-l3)); /* muted */
+  --fo-text-4: hsl(var(--fo-h) var(--fo-s) var(--fo-l4)); /* faint */
+
+  /* Lines */
+  --fo-line-1: hsl(var(--fo-h) var(--fo-line-s) 30%);   /* focus / strong */
+  --fo-line-2: hsl(var(--fo-h) var(--fo-line-s) 22%);   /* hover */
+  --fo-line-3: hsl(var(--fo-h) var(--fo-line-s) 15%);   /* default border */
+  --fo-line-4: hsl(var(--fo-h) var(--fo-line-s) 10%);   /* divider */
+
+  /* Surfaces: darkest → lightest */
+  --fo-bg-0: hsl(var(--fo-h) var(--fo-bg-s) 2.5%);
+  --fo-bg-1: hsl(var(--fo-h) var(--fo-bg-s) 4%);        /* page (~#0a0f0a) */
+  --fo-bg-2: hsl(var(--fo-h) var(--fo-bg-s) 6%);
+  --fo-bg-3: hsl(var(--fo-h) var(--fo-bg-s) 9%);
+  --fo-bg-4: hsl(var(--fo-h) var(--fo-bg-s) 12%);
+
+  /* Washes (states) */
+  --fo-wash-1: hsl(var(--fo-h) var(--fo-s) var(--fo-l2) / 0.07); /* hover */
+  --fo-wash-2: hsl(var(--fo-h) var(--fo-s) var(--fo-l2) / 0.13); /* active / selected */
+  --fo-wash-3: hsl(var(--fo-h) var(--fo-s) var(--fo-l2) / 0.26); /* text selection */
+  --fo-wash-4: hsl(var(--fo-h) var(--fo-s) var(--fo-l2) / 0.20); /* highlight */
+
+  /* Glow: subtle by default. Style Settings can scale it or turn it off. */
+  --fo-glow-strength: 1;
+  --fo-glow-text: 0 0 calc(2px * var(--fo-glow-strength)) hsl(var(--fo-h) var(--fo-s) var(--fo-l2) / 0.35);
+  --fo-glow-heading: 0 0 calc(6px * var(--fo-glow-strength)) hsl(var(--fo-h) var(--fo-s) var(--fo-l2) / 0.5);
+
+  /* Scanlines */
+  --fo-scanline-alpha: 0.18;
+  --fo-scanline-size: 3px;
+
+  /* Fonts */
+  --fo-font-terminal: "Share Tech Mono", "SF Mono", Menlo, Consolas, monospace;
+  --fo-font-readable: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --font-text-theme: var(--fo-font-readable);
+  --font-monospace-theme: var(--fo-font-readable);
+  --font-interface-theme: var(--fo-font-terminal);
+}
+
+/* 1b. Obsidian variables. Applied in both modes so an accidental switch to
+   light mode still shows the terminal rather than a half-themed page. */
+body.theme-dark,
+body.theme-light {
+  color-scheme: dark;
+
+  --accent-h: var(--fo-h);
+  --accent-s: var(--fo-s);
+  --accent-l: var(--fo-l2);
+  --color-accent: var(--fo-text-2);
+  --color-accent-1: var(--fo-text-1);
+  --color-accent-2: var(--fo-text-1);
+
+  /* No second hue: every named colour maps onto the ramp */
+  --color-red: var(--fo-text-1);      --color-red-rgb: var(--fo-rgb-1);
+  --color-orange: var(--fo-text-1);   --color-orange-rgb: var(--fo-rgb-1);
+  --color-yellow: var(--fo-text-1);   --color-yellow-rgb: var(--fo-rgb-1);
+  --color-green: var(--fo-text-2);    --color-green-rgb: var(--fo-rgb-2);
+  --color-cyan: var(--fo-text-2);     --color-cyan-rgb: var(--fo-rgb-2);
+  --color-blue: var(--fo-text-2);     --color-blue-rgb: var(--fo-rgb-2);
+  --color-purple: var(--fo-text-3);   --color-purple-rgb: var(--fo-rgb-3);
+  --color-pink: var(--fo-text-3);     --color-pink-rgb: var(--fo-rgb-3);
+  --color-base-00: var(--fo-bg-0);
+  --color-base-05: var(--fo-bg-1);
+  --color-base-10: var(--fo-bg-1);
+  --color-base-20: var(--fo-bg-2);
+  --color-base-25: var(--fo-bg-3);
+  --color-base-30: var(--fo-line-3);
+  --color-base-35: var(--fo-line-2);
+  --color-base-40: var(--fo-line-1);
+  --color-base-50: var(--fo-text-4);
+  --color-base-60: var(--fo-text-3);
+  --color-base-70: var(--fo-text-3);
+  --color-base-100: var(--fo-text-2);
+
+  /* Surfaces */
+  --background-primary: var(--fo-bg-1);
+  --background-primary-alt: var(--fo-bg-2);
+  --background-secondary: var(--fo-bg-0);
+  --background-secondary-alt: var(--fo-bg-2);
+  --background-modifier-hover: var(--fo-wash-1);
+  --background-modifier-active-hover: var(--fo-wash-2);
+  --background-modifier-border: var(--fo-line-3);
+  --background-modifier-border-hover: var(--fo-line-2);
+  --background-modifier-border-focus: var(--fo-line-1);
+  --background-modifier-form-field: var(--fo-bg-0);
+  --background-modifier-form-field-highlighted: var(--fo-bg-2);
+  --background-modifier-message: var(--fo-bg-3);
+  --background-modifier-success: var(--fo-text-2);
+  --background-modifier-error: var(--fo-text-1);
+  --background-modifier-error-hover: var(--fo-text-1);
+  --background-modifier-cover: hsl(var(--fo-h) var(--fo-bg-s) 1% / 0.85);
+  --divider-color: var(--fo-line-4);
+  --divider-color-hover: var(--fo-line-1);
+
+  /* Text */
+  --text-normal: var(--fo-text-2);
+  --text-muted: var(--fo-text-3);
+  --text-faint: var(--fo-text-4);
+  --text-accent: var(--fo-text-1);
+  --text-accent-hover: var(--fo-text-1);
+  --text-on-accent: var(--fo-bg-0);
+  --text-on-accent-inverted: var(--fo-bg-0);
+  --text-error: var(--fo-text-1);
+  --text-success: var(--fo-text-2);
+  --text-warning: var(--fo-text-1);
+  --text-selection: var(--fo-wash-3);
+  --text-highlight-bg: var(--fo-wash-4);
+  --text-highlight-bg-active: var(--fo-wash-3);
+
+  /* Interactive */
+  --interactive-normal: var(--fo-bg-3);
+  --interactive-hover: var(--fo-bg-4);
+  --interactive-accent: var(--fo-text-2);
+  --interactive-accent-hover: var(--fo-text-1);
+  --interactive-accent-hsl: var(--fo-h), var(--fo-s), var(--fo-l2);
+
+  /* Headings: brightness steps down the ramp */
+  --h1-color: var(--fo-text-1);
+  --h2-color: var(--fo-text-1);
+  --h3-color: var(--fo-text-2);
+  --h4-color: var(--fo-text-2);
+  --h5-color: var(--fo-text-3);
+  --h6-color: var(--fo-text-3);
+  --inline-title-color: var(--fo-text-1);
+
+  /* Inline */
+  --bold-color: var(--fo-text-1);
+  --italic-color: var(--fo-text-2);
+  --link-color: var(--fo-text-1);
+  --link-color-hover: var(--fo-text-1);
+  --link-external-color: var(--fo-text-2);
+  --link-external-color-hover: var(--fo-text-1);
+  --link-unresolved-color: var(--fo-text-3);
+  --link-unresolved-opacity: 1;
+  --link-unresolved-decoration-color: var(--fo-text-4);
+  --tag-color: var(--fo-text-3);
+  --tag-color-hover: var(--fo-text-1);
+  --tag-background: transparent;
+  --tag-background-hover: var(--fo-wash-1);
+  --tag-border-color: transparent;
+  --tag-border-color-hover: transparent;
+  --code-normal: var(--fo-text-1);
+  --code-background: var(--fo-bg-0);
+  --code-comment: var(--fo-text-4);
+  --code-function: var(--fo-text-1);
+  --code-important: var(--fo-text-1);
+  --code-keyword: var(--fo-text-1);
+  --code-operator: var(--fo-text-3);
+  --code-property: var(--fo-text-2);
+  --code-punctuation: var(--fo-text-3);
+  --code-string: var(--fo-text-2);
+  --code-tag: var(--fo-text-1);
+  --code-value: var(--fo-text-2);
+
+  /* Blocks */
+  --hr-color: var(--fo-line-1);
+  --blockquote-border-color: var(--fo-line-1);
+  --blockquote-color: var(--fo-text-3);
+  --list-marker-color: var(--fo-text-3);
+  --list-marker-color-hover: var(--fo-text-1);
+  --list-marker-color-collapsed: var(--fo-text-1);
+  --table-border-color: var(--fo-line-3);
+  --table-header-background: var(--fo-bg-2);
+  --table-header-background-hover: var(--fo-bg-3);
+  --table-header-color: var(--fo-text-1);
+  --table-row-alt-background: transparent;
+  --table-row-background-hover: var(--fo-wash-1);
+  --table-selection: var(--fo-wash-2);
+  --checkbox-color: var(--fo-text-2);
+  --checkbox-color-hover: var(--fo-text-1);
+  --checkbox-border-color: var(--fo-text-3);
+  --checkbox-border-color-hover: var(--fo-text-1);
+  --checkbox-marker-color: var(--fo-bg-0);
+  --checklist-done-color: var(--fo-text-4);
+
+  /* Callouts: every type on the ramp (Phase 2 separates them by border style) */
+  --callout-default: var(--fo-rgb-2);
+  --callout-info: var(--fo-rgb-2);
+  --callout-summary: var(--fo-rgb-2);
+  --callout-todo: var(--fo-rgb-2);
+  --callout-tip: var(--fo-rgb-2);
+  --callout-success: var(--fo-rgb-2);
+  --callout-question: var(--fo-rgb-3);
+  --callout-example: var(--fo-rgb-3);
+  --callout-quote: var(--fo-rgb-3);
+  --callout-warning: var(--fo-rgb-1);
+  --callout-fail: var(--fo-rgb-1);
+  --callout-error: var(--fo-rgb-1);
+  --callout-bug: var(--fo-rgb-1);
+
+  /* Graph */
+  --graph-line: var(--fo-line-2);
+  --graph-node: var(--fo-text-2);
+  --graph-node-unresolved: var(--fo-text-4);
+  --graph-node-focused: var(--fo-text-1);
+  --graph-node-tag: var(--fo-text-3);
+  --graph-node-attachment: var(--fo-text-3);
+  --graph-text: var(--fo-text-2);
+
+  /* Icons */
+  --icon-color: var(--fo-text-3);
+  --icon-color-hover: var(--fo-text-1);
+  --icon-color-active: var(--fo-text-1);
+  --icon-color-focused: var(--fo-text-1);
+
+  /* Navigation trees (file explorer, outline, bookmarks): the selected item
+     is a solid bar with dark text; hover is a dimmer bar */
+  --fo-bar: var(--fo-text-2);
+  --fo-bar-dim: hsl(var(--fo-h) var(--fo-s) var(--fo-l-bar-dim));
+  --fo-bar-text: var(--fo-bg-0);
+  --nav-item-color: var(--fo-text-3);
+  --nav-item-color-hover: var(--fo-bar-text);
+  --nav-item-color-active: var(--fo-bar-text);
+  --nav-item-color-selected: var(--fo-bar-text);
+  --nav-item-color-highlighted: var(--fo-text-1);
+  --nav-item-background-hover: var(--fo-bar-dim);
+  --nav-item-background-active: var(--fo-bar);
+  --nav-item-background-selected: var(--fo-bar-dim);
+  --nav-collapse-icon-color: var(--fo-text-4);
+  --nav-collapse-icon-color-collapsed: var(--fo-text-3);
+
+  /* Tabs: a flat top bar; dim when inactive, bright when active */
+  --tab-container-background: var(--fo-bg-0);
+  --tab-background-active: transparent;
+  --tab-text-color: var(--fo-text-4);
+  --tab-text-color-active: var(--fo-text-3);
+  --tab-text-color-focused: var(--fo-text-4);
+  --tab-text-color-focused-active: var(--fo-text-2);
+  --tab-text-color-focused-active-current: var(--fo-text-1);
+  --tab-text-color-focused-highlighted: var(--fo-text-1);
+  --tab-divider-color: transparent;
+  --tab-outline-color: var(--fo-line-3);
+  --tab-outline-width: 1px;
+  --tab-curve: 0px;
+  --tab-radius: 0;
+  --tab-radius-active: 0;
+
+  /* Window chrome */
+  --titlebar-background: var(--fo-bg-0);
+  --titlebar-background-focused: var(--fo-bg-0);
+  --titlebar-border-color: var(--fo-line-3);
+  --titlebar-text-color: var(--fo-text-3);
+  --titlebar-text-color-focused: var(--fo-text-1);
+  --ribbon-background: var(--fo-bg-0);
+  --ribbon-background-collapsed: var(--fo-bg-0);
+  --status-bar-background: var(--fo-bg-0);
+  --status-bar-border-color: var(--fo-line-3);
+  --status-bar-text-color: var(--fo-text-3);
+
+  /* Modals, prompts, menus */
+  --modal-background: var(--fo-bg-1);
+  --modal-border-color: var(--fo-line-1);
+  --prompt-border-color: var(--fo-line-1);
+  --menu-background: var(--fo-bg-1);
+  --menu-border-color: var(--fo-line-1);
+  --dropdown-background: var(--fo-bg-3);
+  --dropdown-background-hover: var(--fo-bg-4);
+  --shadow-s: 0 0 0 1px var(--fo-line-3), 0 0 12px hsl(var(--fo-h) var(--fo-s) var(--fo-l2) / 0.06);
+  --shadow-l: 0 0 0 1px var(--fo-line-2), 0 0 24px hsl(var(--fo-h) var(--fo-s) var(--fo-l2) / 0.10);
+
+  /* Scrollbars */
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: var(--fo-line-2);
+  --scrollbar-active-thumb-bg: var(--fo-text-4);
+
+  /* Toggles and sliders */
+  --toggle-thumb-color: var(--fo-text-3);
+  --slider-track-background: var(--fo-line-3);
+  --slider-thumb-border-color: var(--fo-text-2);
+
+  /* Canvas card colours: also on the ramp */
+  --canvas-color-1: var(--fo-rgb-1);
+  --canvas-color-2: var(--fo-rgb-1);
+  --canvas-color-3: var(--fo-rgb-2);
+  --canvas-color-4: var(--fo-rgb-2);
+  --canvas-color-5: var(--fo-rgb-3);
+  --canvas-color-6: var(--fo-rgb-3);
+}
+
+/* 1c. Shape and type scale (no colour here) */
+body {
+  --font-text-size: 16px;
+  --line-height-normal: 1.65;
+  --file-line-width: 46rem;
+
+  --radius-s: 0; --radius-m: 0; --radius-l: 0; --radius-xl: 0;
+  --modal-radius: 0;
+  --modal-border-width: 1px;
+  --prompt-border-width: 1px;
+  --toggle-radius: 0;
+  --toggle-thumb-radius: 0;
+  --slider-thumb-radius: 0;
+  --status-bar-radius: 0;
+  --callout-radius: 0;
+  --callout-border-width: 1px;
+  --callout-border-opacity: 1;
+  --callout-padding: 0;
+  --callout-title-padding: 0.45em 0.9em;
+  --callout-content-padding: 0.15em 0.9em 0.25em;
+  --callout-title-weight: 400;
+  --callout-blend-mode: normal;
+  --checkbox-radius: 0;
+  --tag-radius: 0;
+  --button-radius: 0;
+  --input-radius: 0;
+  --code-radius: 0;
+  --blockquote-border-thickness: 2px;
+  --hr-thickness: 1px;
+
+  --bold-weight: 700;
+
+  --h1-font: var(--fo-font-terminal);
+  --h2-font: var(--fo-font-terminal);
+  --h3-font: var(--fo-font-terminal);
+  --h4-font: var(--fo-font-terminal);
+  --h5-font: var(--fo-font-terminal);
+  --h6-font: var(--fo-font-terminal);
+  --inline-title-font: var(--fo-font-terminal);
+
+  --h1-size: 2em;    --h1-weight: 400; --h1-line-height: 1.2;  --h1-letter-spacing: 0.06em;
+  --h2-size: 1.55em; --h2-weight: 400; --h2-line-height: 1.25; --h2-letter-spacing: 0.08em;
+  --h3-size: 1.25em; --h3-weight: 400; --h3-line-height: 1.3;  --h3-letter-spacing: 0.1em;
+  --h4-size: 1.1em;  --h4-weight: 400; --h4-line-height: 1.4;  --h4-letter-spacing: 0.12em;
+  --h5-size: 1em;    --h5-weight: 400; --h5-line-height: 1.4;  --h5-letter-spacing: 0.16em;
+  --h6-size: 0.9em;  --h6-weight: 400; --h6-line-height: 1.4;  --h6-letter-spacing: 0.2em;
+  --inline-title-size: var(--h1-size);
+  --inline-title-weight: 400;
+  --inline-title-line-height: var(--h1-line-height);
+}
+
+/* ---------- 2. Typography ----------------------------------------------- */
+
+/* 2a. Glow: body text gets a faint bloom, headings a stronger one */
+body .markdown-rendered,
+body .cm-s-obsidian .cm-content {
+  text-shadow: var(--fo-glow-text);
+}
+body .inline-title,
+body .markdown-rendered :is(h1, h2, h3, h4, h5, h6),
+body .cm-s-obsidian .HyperMD-header {
+  text-shadow: var(--fo-glow-heading);
+}
+
+/* 2b. Headings: uppercase, spaced, separated by brightness and prefix */
+body .inline-title,
+body .markdown-rendered :is(h1, h2, h3, h4, h5, h6),
+body .cm-s-obsidian .HyperMD-header {
+  text-transform: uppercase;
+}
+
+/* H1 "> " and H2 "» " — Reading view, Live Preview, and the inline title */
+body .inline-title::before,
+body .markdown-rendered h1::before,
+body .markdown-source-view.is-live-preview .HyperMD-header-1::before {
+  content: "> ";
+  color: var(--fo-text-3);
+}
+body .markdown-rendered h2::before,
+body .markdown-source-view.is-live-preview .HyperMD-header-2::before {
+  content: "» ";
+  color: var(--fo-text-3);
+}
+/* While the cursor is on a heading line, Live Preview shows the "#" marks;
+   drop the prefix there so the line doesn't read "> # TITLE" */
+body .markdown-source-view.is-live-preview .cm-active:is(.HyperMD-header-1, .HyperMD-header-2)::before {
+  content: none;
+}
+
+/* H1 and H2 sit on a rule; lower levels step down in brightness only */
+body .markdown-rendered h1,
+body .markdown-rendered h2 {
+  padding-bottom: 0.2em;
+  border-bottom: 1px solid var(--fo-line-3);
+}
+body .markdown-rendered h1 { border-bottom-style: double; border-bottom-width: 3px; }
+
+/* 2c. Inline text: weight, underline style and brackets — never a new hue */
+body strong,
+body .cm-strong { text-shadow: var(--fo-glow-heading); }
+
+body del,
+body .cm-strikethrough {
+  color: var(--fo-text-4);
+  text-decoration-color: var(--fo-text-3);
+}
+
+/* Internal links: brightest, solid underline */
+body .markdown-rendered a.internal-link,
+body .cm-s-obsidian .cm-hmd-internal-link .cm-underline {
+  text-decoration: underline solid 1px;
+  text-underline-offset: 3px;
+}
+/* External links: dashed underline */
+body .markdown-rendered a.external-link,
+body .cm-s-obsidian .cm-link .cm-underline,
+body .cm-s-obsidian .cm-url .cm-underline {
+  text-decoration: underline dashed 1px;
+  text-underline-offset: 3px;
+}
+/* Unresolved links: dimmer, dotted (same in Reading view and Live Preview) */
+body .markdown-rendered a.internal-link.is-unresolved,
+body .cm-s-obsidian .is-unresolved .cm-underline {
+  text-decoration: underline dotted 1px;
+  text-decoration-color: var(--link-unresolved-decoration-color);
+}
+
+/* Tags: [#TAG] — uppercase, spaced, bracketed, muted until hovered */
+body .markdown-rendered a.tag,
+body .cm-s-obsidian .cm-hashtag {
+  font-family: var(--fo-font-terminal);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0;
+}
+body .markdown-rendered a.tag::before,
+body .cm-s-obsidian .cm-hashtag-begin::before { content: "["; color: var(--fo-text-4); }
+body .markdown-rendered a.tag::after,
+body .cm-s-obsidian .cm-hashtag-end::after { content: "]"; color: var(--fo-text-4); }
+
+/* Inline code: bright, boxed, on the darkest surface */
+body .markdown-rendered :not(pre) > code,
+body .cm-s-obsidian span.cm-inline-code {
+  border: 1px solid var(--fo-line-3);
+  padding: 0.05em 0.35em;
+}
+
+/* Highlight: a darker band, text stays bright */
+body .markdown-rendered mark,
+body .cm-s-obsidian .cm-highlight { color: var(--fo-text-1); }
+
+/* ---------- 3. Layout: CRT scanlines ------------------------------------ */
+
+/* A fixed, click-through layer over the workspace (not over menus/modals) */
+body .workspace { position: relative; }
+body .workspace::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--fo-scanline-size) - 1px),
+    hsl(var(--fo-h) var(--fo-bg-s) 1% / var(--fo-scanline-alpha)) calc(var(--fo-scanline-size) - 1px),
+    hsl(var(--fo-h) var(--fo-bg-s) 1% / var(--fo-scanline-alpha)) var(--fo-scanline-size)
+  );
+}
+
+/* ---------- 4. Components ----------------------------------------------- */
+
+/* Blockquotes: muted text behind a bright rule */
+body .markdown-rendered blockquote { font-style: normal; }
+
+/* Code blocks: a recessed panel */
+body .markdown-rendered pre {
+  border: 1px solid var(--fo-line-3);
+}
+
+/* Live Preview code blocks get the same frame, drawn on the first/last lines */
+body .markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock {
+  border-left: 1px solid var(--fo-line-3);
+  border-right: 1px solid var(--fo-line-3);
+}
+body .markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock-begin { border-top: 1px solid var(--fo-line-3); }
+body .markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock-end { border-bottom: 1px solid var(--fo-line-3); }
+
+/* Tables: terminal-face header (Reading view, Live Preview, Dataview).
+   Monospace runs wide, so long cell content may break inside words. */
+body .markdown-rendered th,
+body .markdown-source-view .cm-table-widget th,
+body .table-view-table > thead > tr > th {
+  font-family: var(--fo-font-terminal);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+body .markdown-rendered :is(td, th),
+body .markdown-source-view .cm-table-widget :is(td, th) {
+  overflow-wrap: break-word;
+}
+
+/* Horizontal rules: dashed */
+body .markdown-rendered hr,
+body .cm-s-obsidian .hr hr { border-top-style: dashed; }
+
+/* Selection keeps text readable */
+body ::selection { color: var(--fo-text-1); }
+
+/* 4a. Tab headers: a flat top bar with a bracketed active tab ----------- */
+body .workspace-tab-header-inner-title {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+body .workspace-tab-header.is-active::before,
+body .workspace-tab-header.is-active::after { display: none; }
+
+/* The active tab sits inside square brackets drawn with gradients:
+   a vertical stroke and two short ticks on each side, "[ TITLE ]" */
+body .workspace-tab-header.is-active .workspace-tab-header-inner {
+  --fo-tick: 6px;
+  background:
+    linear-gradient(currentColor, currentColor) left top / 1px 100% no-repeat,
+    linear-gradient(currentColor, currentColor) left top / var(--fo-tick) 1px no-repeat,
+    linear-gradient(currentColor, currentColor) left bottom / var(--fo-tick) 1px no-repeat,
+    linear-gradient(currentColor, currentColor) right top / 1px 100% no-repeat,
+    linear-gradient(currentColor, currentColor) right top / var(--fo-tick) 1px no-repeat,
+    linear-gradient(currentColor, currentColor) right bottom / var(--fo-tick) 1px no-repeat;
+  text-shadow: var(--fo-glow-heading);
+}
+body .workspace-tab-header:not(.is-active):hover .workspace-tab-header-inner { color: var(--fo-text-3); }
+
+/* 4b. Selection bars: file explorer, outline, bookmarks, search --------- */
+body .tree-item-self.is-active,
+body .tree-item-self.is-selected,
+body .tree-item-self:hover { text-shadow: none; }
+body .tree-item-self:is(.is-active, .is-selected, :hover) :is(.tree-item-icon, .collapse-icon, .nav-file-tag, .tree-item-flair) {
+  color: inherit;
+}
+body .tree-item-self:is(.is-active, .is-selected, :hover) .collapse-icon svg { color: inherit; }
+body .tree-item-self .nav-file-tag { background: transparent; border: 1px solid currentColor; }
+
+/* Menus and suggestion lists (command palette, quick switcher) use the same bar */
+body .menu-item.selected:not(.is-disabled):not(.is-label),
+body .suggestion-item.is-selected {
+  background-color: var(--fo-bar);
+  color: var(--fo-bar-text);
+  text-shadow: none;
+}
+body .menu-item.selected:not(.is-disabled):not(.is-label) :is(.menu-item-icon, .menu-item-icon svg),
+body .suggestion-item.is-selected :is(*, .suggestion-hotkey, .suggestion-note, .suggestion-flair) {
+  color: inherit;
+}
+body .suggestion-item.is-selected kbd { border-color: currentColor; background: transparent; }
+body .suggestion-highlight {
+  color: var(--fo-text-1);
+  font-weight: 400;
+  text-decoration: underline solid 1px;
+  text-underline-offset: 2px;
+}
+body .menu { border-radius: 0; }
+body .menu-separator { border-top-style: dashed; }
+
+/* 4c. Callouts: bordered terminal boxes ---------------------------------- */
+/* Types differ by brightness (Phase 1 ramp) and by border style here:
+     solid    note, info, todo, abstract
+     heavy    tip, success           (thick left edge)
+     dashed   question, example
+     rule     quote                  (left rule only)
+     double   warning
+     inverted failure, danger, bug  (double border, solid title bar) */
+body .callout {
+  background-color: rgba(var(--callout-color), 0.035);
+  border-style: solid;
+}
+body .callout-title {
+  padding: var(--callout-title-padding);
+  font-family: var(--fo-font-terminal);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px dashed rgba(var(--callout-color), 0.45);
+  text-shadow: var(--fo-glow-heading);
+}
+body .callout.is-collapsed .callout-title { border-bottom-color: transparent; }
+body .callout-content { padding: var(--callout-content-padding); }
+body .callout-icon,
+body .callout-fold { color: rgb(var(--callout-color)); }
+
+body .callout:is([data-callout="tip"], [data-callout="hint"], [data-callout="important"],
+                 [data-callout="success"], [data-callout="check"], [data-callout="done"]) {
+  border-left-width: 4px;
+}
+body .callout:is([data-callout="question"], [data-callout="help"], [data-callout="faq"],
+                 [data-callout="example"]) {
+  border-style: dashed;
+}
+body .callout:is([data-callout="quote"], [data-callout="cite"]) {
+  border-width: 0 0 0 2px;
+  background-color: transparent;
+}
+body .callout:is([data-callout="quote"], [data-callout="cite"]) .callout-title { border-bottom: none; }
+body .callout:is([data-callout="warning"], [data-callout="caution"], [data-callout="attention"],
+                 [data-callout="failure"], [data-callout="fail"], [data-callout="missing"],
+                 [data-callout="danger"], [data-callout="error"], [data-callout="bug"]) {
+  border-style: double;
+  border-width: 3px;
+}
+body .callout:is([data-callout="failure"], [data-callout="fail"], [data-callout="missing"],
+                 [data-callout="danger"], [data-callout="error"], [data-callout="bug"]) > .callout-title {
+  background-color: rgb(var(--callout-color));
+  color: var(--fo-bar-text);
+  text-shadow: none;
+}
+body .callout:is([data-callout="failure"], [data-callout="fail"], [data-callout="missing"],
+                 [data-callout="danger"], [data-callout="error"], [data-callout="bug"]) > .callout-title :is(.callout-icon, .callout-fold) {
+  color: inherit;
+}
+
+/* 4d. [!terminal]: a terminal screen inside the note --------------------- */
+body .callout[data-callout="terminal"] {
+  --callout-color: var(--fo-rgb-1);
+  --callout-icon: lucide-terminal;
+  background-color: var(--fo-bg-0);
+  border: 3px double rgb(var(--fo-rgb-2));
+  box-shadow:
+    inset 0 0 2.5em hsl(var(--fo-h) var(--fo-s) var(--fo-l2) / 0.07),
+    0 0 0.8em hsl(var(--fo-h) var(--fo-s) var(--fo-l2) / 0.12);
+  font-family: var(--fo-font-terminal);
+}
+body .callout[data-callout="terminal"] > .callout-title {
+  border-bottom: 1px solid rgba(var(--fo-rgb-2), 0.6);
+}
+/* Blinking block cursor after the title */
+body .callout[data-callout="terminal"] .callout-title-inner::after {
+  content: "\2588";
+  margin-left: 0.3em;
+  animation: fo-cursor-blink 1.1s steps(1, end) infinite;
+}
+/* Header line, written for this theme */
+body .callout[data-callout="terminal"] > .callout-content::before {
+  content: "PHOSPHOR FIELD TERMINAL \00B7  LOCAL LINK OPEN \00B7  READY";
+  display: block;
+  margin: 0.35em 0 0.6em;
+  padding-bottom: 0.35em;
+  border-bottom: 1px dashed rgba(var(--fo-rgb-2), 0.45);
+  color: var(--fo-text-3);
+  letter-spacing: 0.14em;
+  font-size: 0.85em;
+  text-shadow: none;
+}
+body .callout[data-callout="terminal"] > .callout-content {
+  color: var(--fo-text-1);
+  text-shadow: var(--fo-glow-heading);
+}
+@keyframes fo-cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body .callout[data-callout="terminal"] .callout-title-inner::after { animation: none; }
+}
+
+/* 4e. Task checkboxes as [ ] and [X] ------------------------------------- */
+body input[type="checkbox"].task-list-item-checkbox {
+  --checkbox-size: 1.1em;
+  border: 0;
+  background-color: transparent;
+  margin-inline-end: 0.55em;
+  overflow: visible;
+}
+body input[type="checkbox"].task-list-item-checkbox::before {
+  content: "[ ]";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -52%);
+  font-family: var(--fo-font-readable);
+  font-size: 0.95em;
+  line-height: 1;
+  white-space: pre;
+  color: var(--fo-text-3);
+}
+body input[type="checkbox"].task-list-item-checkbox:hover::before { color: var(--fo-text-1); }
+body input[type="checkbox"].task-list-item-checkbox:checked { background-color: transparent; }
+body input[type="checkbox"].task-list-item-checkbox:checked::before {
+  content: "[X]";
+  color: var(--fo-text-1);
+  text-shadow: var(--fo-glow-heading);
+}
+body input[type="checkbox"].task-list-item-checkbox:checked::after { display: none; }
+/* The brackets are wider than the box they're centred on; Obsidian's own
+   list rules set the gap after the box, so match their specificity */
+body .markdown-rendered li.task-list-item > input[type="checkbox"].task-list-item-checkbox,
+body .markdown-source-view.mod-cm6 .HyperMD-task-line input[type="checkbox"].task-list-item-checkbox {
+  margin-inline-end: 0.85em;
+}
+
+/* 4f. Scrollbars --------------------------------------------------------- */
+body ::-webkit-scrollbar-thumb { border-radius: 0; }
+
+/* 4g. Modals, command palette, settings ---------------------------------- */
+body :is(.modal-title, .setting-item-heading .setting-item-name, .vertical-tab-header-group-title) {
+  font-family: var(--fo-font-terminal);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+body .modal-title { color: var(--fo-text-1); text-shadow: var(--fo-glow-heading); }
+body .vertical-tab-header-group-title { color: var(--fo-text-4); }
+body .vertical-tab-nav-item.is-active,
+body .vertical-tab-nav-item.is-active .vertical-tab-nav-item-chevron {
+  background-color: var(--fo-bar);
+  color: var(--fo-bar-text);
+}
+body .vertical-tab-nav-item:not(.is-active):hover {
+  background-color: var(--fo-bar-dim);
+  color: var(--fo-bar-text);
+}
+body .prompt-instructions {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fo-text-4);
+}
+body :is(button, .dropdown, input[type="text"], input[type="search"], input[type="number"], textarea) {
+  border-radius: 0;
+}
+body button:not(.clickable-icon) {
+  box-shadow: none;
+  border: 1px solid var(--fo-line-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+body button.mod-cta { border-color: var(--fo-bar); }
+
+/* Toggles: a square switch, dark thumb on the lit track */
+body .checkbox-container { border: 1px solid var(--fo-line-2); }
+body .checkbox-container.is-enabled::after { background-color: var(--fo-bar-text); }
+
+/* 4h. Status bar --------------------------------------------------------- */
+body .status-bar {
+  font-family: var(--fo-font-terminal);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ---------- 5. Core views and plugins ----------------------------------- */
+
+/* 5a. Canvas: same ramp, square cards, terminal labels */
+body.theme-dark,
+body.theme-light {
+  --canvas-background: var(--fo-bg-1);
+  --canvas-dot-pattern: var(--fo-line-2);
+}
+body .canvas-node-container { border-radius: 0; }
+body .canvas-node-label,
+body .canvas-group-label {
+  font-family: var(--fo-font-terminal);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+body .canvas-card-menu,
+body .canvas-controls .canvas-control-group { border-radius: 0; }
+
+/* 5b. Graph view: controls panel to match; node and line colours are
+   the --graph-* variables in section 1 */
+body .graph-controls {
+  border-radius: 0;
+  background-color: var(--fo-bg-0);
+}
+
+/* 5c. PDF export / print: dark ink on white paper, no glow or overlays.
+   Green-on-black would waste toner, and green on white is unreadable. */
+@media print {
+  html body.theme-dark,
+  html body.theme-light {
+    color-scheme: light;
+    --fo-text-1: #000;
+    --fo-text-2: #111;
+    --fo-text-3: #3d3d3d;
+    --fo-text-4: #555;
+    --fo-line-1: #666;
+    --fo-line-2: #999;
+    --fo-line-3: #bbb;
+    --fo-line-4: #ddd;
+    --fo-bg-0: #fff;
+    --fo-bg-1: #fff;
+    --fo-bg-2: #f5f5f5;
+    --fo-bg-3: #ececec;
+    --fo-bg-4: #e4e4e4;
+    --fo-wash-1: rgba(0, 0, 0, 0.04);
+    --fo-wash-2: rgba(0, 0, 0, 0.08);
+    --fo-wash-3: rgba(0, 0, 0, 0.16);
+    --fo-wash-4: rgba(0, 0, 0, 0.12);
+    --fo-rgb-1: 0, 0, 0;
+    --fo-rgb-2: 17, 17, 17;
+    --fo-rgb-3: 61, 61, 61;
+    --fo-rgb-4: 85, 85, 85;
+    --fo-bar: #111;
+    --fo-bar-dim: #555;
+    --fo-bar-text: #fff;
+    --fo-glow-text: none;
+    --fo-glow-heading: none;
+  }
+  body .workspace::before,
+  body .workspace::after { display: none; }
+  body .callout[data-callout="terminal"] { box-shadow: none; }
+  body .callout[data-callout="terminal"] .callout-title-inner::after { content: none; }
+}
+
+/* 5d. Dataview: tables use the core table rules; inline fields as key/value chips */
+body .dataview.inline-field-key {
+  background-color: var(--fo-bg-3);
+  color: var(--fo-text-3);
+  font-family: var(--fo-font-terminal);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+body .dataview.inline-field-value {
+  background-color: var(--fo-bg-2);
+  color: var(--fo-text-1);
+}
+body .dataview.inline-field-standalone-value { background-color: var(--fo-bg-2); }
+body .table-view-table td { overflow-wrap: break-word; }
+body .dataview.dataview-error {
+  background-color: var(--fo-bg-0);
+  color: var(--fo-text-1);
+  border: 1px dashed var(--fo-line-1);
+}
+
+/* 5e. Kanban: square lanes and cards; slightly smaller type so monospace
+   fits the default lane width */
+body .kanban-plugin__lane {
+  border-radius: 0;
+  border: 1px solid var(--fo-line-3);
+  background-color: var(--fo-bg-0);
+}
+body :is(.kanban-plugin__lane-title-text, .kanban-plugin__lane-title-count) {
+  font-family: var(--fo-font-terminal);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+body .kanban-plugin__item {
+  border-radius: 0;
+  border: 1px solid var(--fo-line-3);
+  box-shadow: none;
+}
+body .kanban-plugin__item:hover { border-color: var(--fo-line-1); }
+body .kanban-plugin__item-title-wrapper { background-color: var(--fo-bg-1); }
+body .kanban-plugin__item-content-wrapper { font-size: 0.92em; }
+body .kanban-plugin__lane-action-add,
+body .kanban-plugin__new-item-button { border-radius: 0; }
+
+/* 5f. Calendar: terminal face, compact so seven monospace columns fit the
+   sidebar; today is underlined so it doesn't rely on brightness alone */
+body #calendar-container {
+  --color-background-heading: transparent;
+  --color-background-day: transparent;
+  --color-background-weeknum: transparent;
+  --color-background-weekend: var(--fo-wash-1);
+  --color-dot: var(--fo-text-3);
+  --color-arrow: var(--fo-text-3);
+  --color-button: var(--fo-text-3);
+  --color-text-title: var(--fo-text-1);
+  --color-text-heading: var(--fo-text-3);
+  --color-text-day: var(--fo-text-2);
+  --color-text-today: var(--fo-text-1);
+  --color-text-weeknum: var(--fo-text-4);
+  font-family: var(--fo-font-terminal);
+  letter-spacing: 0;
+}
+body #calendar-container :is(.day, .week-num) { font-size: 0.9em; }
+body #calendar-container .today { text-decoration: underline 1px; text-underline-offset: 3px; }
+body #calendar-container .day:is(.active, .active:hover) {
+  background-color: var(--fo-bar);
+  color: var(--fo-bar-text);
+}
+body #calendar-container .title { text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* 5g. Reduced motion: the theme has two animations, the terminal cursor
+   (section 4d) and the load flicker (section 6e). Each one is switched off
+   under prefers-reduced-motion right where it is defined. */
+
+/* ---------- 6. Style Settings ------------------------------------------- */
+/* Every option below works through a class or variable on <body>. Without
+   the Style Settings plugin, the defaults apply: Green, glow on, scanlines
+   on, no vignette, no flicker, readable body font. */
+
+/* 6a. Palettes: each one swaps the inputs of the single-hue ramp */
+body.fo-palette-amber {
+  --fo-h: 37;
+  --fo-s: 100%;
+  --fo-bg-s: 30%;
+  --fo-line-s: 60%;
+  --fo-l1: 76%;
+  --fo-l2: 63%;   /* ≈ #ffb742 */
+  --fo-l3: 42%;
+  --fo-l4: 36%;
+  --fo-l-bar-dim: 36%;
+  --fo-rgb-1: 255, 208, 133;
+  --fo-rgb-2: 255, 183, 66;
+  --fo-rgb-3: 214, 132, 0;
+  --fo-rgb-4: 184, 113, 0;
+}
+body.fo-palette-white {
+  --fo-h: 210;
+  --fo-s: 12%;
+  --fo-bg-s: 8%;
+  --fo-line-s: 10%;
+  --fo-l1: 94%;
+  --fo-l2: 82%;
+  --fo-l3: 58%;
+  --fo-l4: 50%;
+  --fo-l-bar-dim: 50%;
+  --fo-rgb-1: 238, 240, 242;
+  --fo-rgb-2: 204, 209, 215;
+  --fo-rgb-3: 135, 148, 161;
+  --fo-rgb-4: 112, 127, 143;
+}
+body.fo-palette-blue {
+  --fo-h: 197;
+  --fo-s: 100%;
+  --fo-bg-s: 30%;
+  --fo-line-s: 60%;
+  --fo-l1: 76%;
+  --fo-l2: 60%;
+  --fo-l3: 42%;
+  --fo-l4: 37%;
+  --fo-l-bar-dim: 36%;
+  --fo-rgb-1: 133, 220, 255;
+  --fo-rgb-2: 51, 197, 255;
+  --fo-rgb-3: 0, 154, 214;
+  --fo-rgb-4: 0, 135, 189;
+}
+
+/* 6b. Glow off */
+body.fo-no-glow {
+  --fo-glow-text: none;
+  --fo-glow-heading: none;
+}
+
+/* 6c. Scanlines off (intensity is the --fo-scanline-alpha slider) */
+body.fo-no-scanlines .workspace::after { display: none; }
+
+/* 6d. CRT vignette: darkened corners over the workspace */
+body.fo-vignette .workspace::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 39;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    hsl(var(--fo-h) var(--fo-bg-s) 1% / 0.6) 100%
+  );
+}
+
+/* 6e. Load flicker: one short power-on flicker when the vault opens */
+body.fo-flicker .workspace {
+  animation: fo-power-on 0.9s linear 1 both;
+}
+@keyframes fo-power-on {
+  0%   { opacity: 0; }
+  8%   { opacity: 0.6; }
+  12%  { opacity: 0.15; }
+  20%  { opacity: 0.85; }
+  26%  { opacity: 0.4; }
+  40%  { opacity: 1; }
+  55%  { opacity: 0.88; }
+  100% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.fo-flicker .workspace { animation: none; }
+}
+
+/* 6f. Body font: terminal face instead of the readable one */
+body.fo-body-terminal {
+  --font-text-theme: var(--fo-font-terminal);
+}
+
+/* @settings
+
+name: Fallout
+id: fallout
+settings:
+  -
+    id: fo-heading-palette
+    title: Palette
+    type: heading
+    level: 2
+    collapsed: false
+  -
+    id: fo-palette
+    title: Phosphor colour
+    description: Every colour in the theme is one hue at different brightnesses. Pick the hue.
+    type: class-select
+    allowEmpty: false
+    default: fo-palette-green
+    options:
+      -
+        label: Green
+        value: fo-palette-green
+      -
+        label: Amber
+        value: fo-palette-amber
+      -
+        label: White
+        value: fo-palette-white
+      -
+        label: Blue
+        value: fo-palette-blue
+  -
+    id: fo-heading-screen
+    title: Screen effects
+    type: heading
+    level: 2
+    collapsed: false
+  -
+    id: fo-no-glow
+    title: Turn off glow
+    description: Removes the text glow. Text stays fully readable without it.
+    type: class-toggle
+    default: false
+  -
+    id: fo-glow-strength
+    title: Glow strength
+    description: Multiplies the glow radius. 1 is the default.
+    type: variable-number-slider
+    default: 1
+    min: 0.25
+    max: 3
+    step: 0.25
+  -
+    id: fo-no-scanlines
+    title: Turn off scanlines
+    type: class-toggle
+    default: false
+  -
+    id: fo-scanline-alpha
+    title: Scanline intensity
+    description: Opacity of the scanline overlay.
+    type: variable-number-slider
+    default: 0.18
+    min: 0.04
+    max: 0.5
+    step: 0.02
+  -
+    id: fo-vignette
+    title: CRT vignette
+    description: Darkens the corners of the workspace like a curved tube.
+    type: class-toggle
+    default: false
+  -
+    id: fo-flicker
+    title: Load flicker
+    description: A short power-on flicker when the vault opens. Off by default, and never runs when your system asks for reduced motion.
+    type: class-toggle
+    default: false
+  -
+    id: fo-heading-type
+    title: Type
+    type: heading
+    level: 2
+    collapsed: false
+  -
+    id: fo-body-font
+    title: Body font
+    description: Readable mono (JetBrains Mono) or terminal mono (Share Tech Mono, which has no true bold or italic).
+    type: class-select
+    allowEmpty: false
+    default: fo-body-readable
+    options:
+      -
+        label: Readable mono
+        value: fo-body-readable
+      -
+        label: Terminal mono
+        value: fo-body-terminal
+
+*/

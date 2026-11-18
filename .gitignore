@@ -1,0 +1,6 @@
+.DS_Store
+# Obsidian per-user state in the test vault
+test-vault/.obsidian/workspace*.json
+test-vault/.obsidian/cache
+test-vault/.obsidian/plugins/
+test-vault/.trash/

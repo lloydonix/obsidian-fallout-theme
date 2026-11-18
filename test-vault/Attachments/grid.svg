@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180">
+  <!-- Original test image: a plain grid with a sine trace. -->
+  <rect width="320" height="180" fill="#0a0f0a"/>
+  <g stroke="#0d3a20" stroke-width="1">
+    <path d="M0 30H320M0 60H320M0 90H320M0 120H320M0 150H320"/>
+    <path d="M40 0V180M80 0V180M120 0V180M160 0V180M200 0V180M240 0V180M280 0V180"/>
+  </g>
+  <path d="M0 90 C40 30 80 30 120 90 S200 150 240 90 S300 40 320 70" fill="none" stroke="#1aff80" stroke-width="2"/>
+  <text x="12" y="22" fill="#1aff80" font-family="monospace" font-size="12">TEST SIGNAL</text>
+</svg>
